@@ -5,8 +5,7 @@ Herramientas didácticas interactivas para la asignatura de Metodología de la I
 **Escuela Internacional de Medicina, Universidad Anáhuac Cancún**
 Autora: Dra. Helena Solleiro Villavicencio
 
-Sitio publicado: https://USUARIO.github.io/metodologia-investigacion-clinica/
-(sustituye `USUARIO` por tu nombre de usuario de GitHub una vez que actives GitHub Pages)
+Sitio publicado: https://hsolleiro.github.io/metodologia-investigacion-clinica/
 
 ---
 
@@ -56,7 +55,7 @@ En la elaboración de estas herramientas se utilizó asistencia de inteligencia 
 
 ## Cómo citar
 
-> Solleiro Villavicencio, H. (2026). *Metodología de la Investigación Clínica: herramientas interactivas*. Universidad Anáhuac Cancún, Escuela Internacional de Medicina. https://USUARIO.github.io/metodologia-investigacion-clinica/
+> Solleiro Villavicencio, H. (2026). *Metodología de la Investigación Clínica: herramientas interactivas*. Universidad Anáhuac Cancún, Escuela Internacional de Medicina. https://hsolleiro.github.io/metodologia-investigacion-clinica/
 
 ## Aviso
 
