@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metodología de la Investigación Clínica · Universidad Anáhuac Cancún</title>
+<meta name="description" content="Herramientas interactivas de apoyo para la asignatura de Metodología de la Investigación Clínica, Escuela Internacional de Medicina, Universidad Anáhuac Cancún.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tinta:#16262e; --tinta-2:#3f5763; --tinta-3:#6d838d;
+  --papel:#f1f0ec; --ecg:#fbe9e4; --ecg-linea:#ecb9ac; --ecg-linea-fina:#f6d8d0;
+  --acero:#41647d; --verde:#1e6d5b; --ciruela:#6d4462; --rojo:#a63628; --ambar:#b8801f;
+  --borde:#dcdad3; --sombra:0 1px 2px rgba(22,38,46,.06), 0 8px 24px rgba(22,38,46,.05);
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --cuerpo:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);font-family:var(--cuerpo);
+  font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);line-height:1.12;margin:0;letter-spacing:-.015em}
+p{margin:0 0 .9em} p:last-child{margin-bottom:0}
+a{color:var(--acero)}
+.wrap{max-width:1000px;margin:0 auto;padding:0 22px}
+.eyebrow{font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--tinta-3);margin:0}
+.ecg-papel{
+  background-color:var(--ecg);
+  background-image:
+    repeating-linear-gradient(to right, var(--ecg-linea) 0 1px, transparent 1px 25px),
+    repeating-linear-gradient(to bottom, var(--ecg-linea) 0 1px, transparent 1px 25px),
+    repeating-linear-gradient(to right, var(--ecg-linea-fina) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(to bottom, var(--ecg-linea-fina) 0 1px, transparent 1px 5px);
+}
+.portada{border-bottom:1px solid var(--ecg-linea);padding:56px 0 0;overflow:hidden}
+.portada h1{font-size:clamp(2.2rem,6vw,3.9rem);font-weight:800;max-width:16ch;margin:14px 0 16px}
+.portada .lede{font-size:clamp(1rem,2.2vw,1.18rem);max-width:58ch;color:var(--tinta-2)}
+.sede{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--tinta-2);margin:18px 0 0}
+.trazo{display:block;width:100%;height:110px;margin-top:22px}
+.trazo path{fill:none;stroke:var(--rojo);stroke-width:2.1;stroke-linejoin:round;stroke-linecap:round;
+  stroke-dasharray:2600;stroke-dashoffset:2600;animation:latir 4s ease-out .3s forwards}
+@keyframes latir{to{stroke-dashoffset:0}}
+main{padding:56px 0 10px}
+.cab{border-bottom:2px solid var(--tinta);padding-bottom:12px;margin-bottom:26px}
+.cab h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:700;margin-top:6px}
+.rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.herramienta{
+  background:#fff;border:1px solid var(--borde);border-top:4px solid var(--c,var(--acero));
+  border-radius:3px;padding:22px;box-shadow:var(--sombra);display:flex;flex-direction:column;
+  text-decoration:none;color:inherit;transition:transform .18s ease, box-shadow .18s ease;
+}
+a.herramienta:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(22,38,46,.08),0 14px 32px rgba(22,38,46,.09)}
+.herramienta .n{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--c,var(--acero))}
+.herramienta h3{font-size:1.25rem;margin:7px 0 10px}
+.herramienta p{font-size:14.8px;color:var(--tinta-2)}
+.temas{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 0;padding:0;list-style:none}
+.temas li{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  background:#f4f3ef;border:1px solid var(--borde);border-radius:2px;padding:4px 7px;color:var(--tinta-2)}
+.entrar{margin-top:16px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--c,var(--acero));font-weight:600}
+.herramienta.pendiente{opacity:.62;border-top-style:dashed;cursor:default}
+.herramienta.pendiente .entrar{color:var(--tinta-3)}
+.aviso{border-left:3px solid var(--ambar);background:#fdf6e6;padding:14px 17px;
+  border-radius:0 3px 3px 0;font-size:15px;margin-top:28px}
+footer{margin-top:64px;border-top:1px solid var(--borde);background:#fff}
+footer .wrap{padding-top:28px;padding-bottom:36px}
+footer p{font-size:13.6px;color:var(--tinta-3);max-width:74ch}
+footer .cita{font-family:var(--mono);font-size:12.5px;background:#f7f6f2;border:1px solid var(--borde);
+  padding:11px 14px;border-radius:3px;color:var(--tinta-2);margin-top:14px}
+:focus-visible{outline:2.5px solid var(--acero);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="portada ecg-papel">
+  <div class="wrap">
+    <p class="eyebrow">Universidad Anáhuac Cancún · Escuela Internacional de Medicina</p>
+    <h1>Metodología de la Investigación Clínica</h1>
+    <p class="lede">Herramientas interactivas de apoyo para la asignatura. Cada una se abre en el navegador, funciona sin instalar nada y puede usarse en clase, en el laboratorio de cómputo o desde el teléfono.</p>
+    <p class="sede">Recurso abierto para estudiantes y docentes</p>
+    <svg class="trazo" viewBox="0 0 1200 110" preserveAspectRatio="none" aria-hidden="true">
+      <path id="trazoECG"></path>
+    </svg>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="cab">
+    <p class="eyebrow">Contenido</p>
+    <h2>Herramientas disponibles</h2>
+  </div>
+
+  <div class="rejilla">
+
+    <!-- Para agregar una herramienta nueva: copia este bloque completo, cambia la carpeta
+         en el href, el título, la descripción y los temas. El color se define en style="--c:...". -->
+    <a class="herramienta" href="estadistica/" style="--c:#a63628">
+      <p class="n">Unidad 1</p>
+      <h3>Del dato clínico a la conclusión</h3>
+      <p>Alcance de la investigación, formulación de hipótesis y fundamentos estadísticos, con ejemplos de la práctica clínica. Incluye dial de alcances, árbol de decisión, curva de rechazo interactiva, simulación de 100 intervalos de confianza, calculadora de tamaño de muestra y autoevaluación de 10 casos.</p>
+      <ul class="temas">
+        <li>Alcance</li><li>Hipótesis</li><li>Valor p</li><li>IC</li><li>Potencia</li><li>Tamaño de muestra</li><li>Variables</li>
+      </ul>
+      <p class="entrar">Abrir herramienta →</p>
+    </a>
+
+    <div class="herramienta pendiente" style="--c:#41647d">
+      <p class="n">Próximamente</p>
+      <h3>Espacio para la siguiente unidad</h3>
+      <p>Este bloque queda listo para la próxima herramienta del curso. Duplica el bloque marcado en el código de esta página, cambia el nombre de la carpeta y aparecerá aquí.</p>
+      <p class="entrar">En preparación</p>
+    </div>
+
+  </div>
+
+  <div class="aviso"><strong>Para estudiantes:</strong> nada de lo que respondas se guarda ni se envía a ningún servidor. Puedes equivocarte todas las veces que quieras, reiniciar los ejercicios y volver cuando lo necesites.</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="eyebrow">Autoría y uso</p>
+    <p style="margin-top:10px">Material didáctico desarrollado por la Dra. Helena Solleiro Villavicencio para la asignatura de Metodología de la Investigación Clínica, Escuela Internacional de Medicina, Universidad Anáhuac Cancún. En su elaboración se utilizó asistencia de inteligencia artificial para la redacción y el desarrollo del código; el contenido conceptual, los ejemplos clínicos y la revisión final son responsabilidad de la autora.</p>
+    <p style="margin-top:10px">Los ejemplos son ilustrativos con fines docentes y no sustituyen guías de práctica clínica ni la asesoría de un metodólogo. Publicado bajo licencia Creative Commons Atribución, No Comercial, Compartir Igual 4.0 Internacional (CC BY-NC-SA 4.0). Puedes usarlo y adaptarlo en tus cursos citando la fuente.</p>
+    <p class="cita">Solleiro Villavicencio, H. (2026). Metodología de la Investigación Clínica: herramientas interactivas. Universidad Anáhuac Cancún, Escuela Internacional de Medicina.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var p = document.getElementById("trazoECG");
+  if(!p) return;
+  var d = "M0,62 ";
+  for(var b=0;b<6;b++){
+    var x = b*200;
+    d += "L"+(x+34)+",62 L"+(x+44)+",53 L"+(x+54)+",62 L"+(x+70)+",62 "+
+         "L"+(x+76)+",67 L"+(x+84)+",16 L"+(x+92)+",96 L"+(x+100)+",57 L"+(x+108)+",62 "+
+         "L"+(x+132)+",62 L"+(x+146)+",44 L"+(x+160)+",62 L"+(x+200)+",62 ";
+  }
+  p.setAttribute("d", d);
+})();
+</script>
+</body>
+</html>
