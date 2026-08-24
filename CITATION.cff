@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+title: "Metodología de la Investigación Clínica: herramientas interactivas"
+message: "Si utiliza este material en su docencia o investigación, por favor cítelo así."
+type: software
+authors:
+  - family-names: "Solleiro Villavicencio"
+    given-names: "Helena"
+    affiliation: "Escuela Internacional de Medicina, Universidad Anáhuac Cancún"
+abstract: >-
+  Colección de herramientas didácticas interactivas para la enseñanza de
+  metodología de la investigación en ciencias de la salud. Cubre el alcance
+  de la investigación, la formulación y contraste de hipótesis y los
+  fundamentos de estadística inferencial, con ejemplos clínicos.
+keywords:
+  - metodología de la investigación
+  - bioestadística
+  - educación médica
+  - diseño de estudios
+  - recurso educativo abierto
+license: CC-BY-NC-SA-4.0
+version: "1.0.0"
+date-released: "2026-08-24"
