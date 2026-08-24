@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From Clinical Data to Conclusion · Interactive Tool</title>
+<meta name="description" content="Interactive study tool on research scope, hypothesis testing and statistical fundamentals for medical students. School of International Medicine, Universidad Anáhuac Cancún.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tinta:#16262e;
+  --tinta-2:#3f5763;
+  --tinta-3:#6d838d;
+  --papel:#f1f0ec;
+  --tarjeta:#ffffff;
+  --ecg:#fbe9e4;
+  --ecg-linea:#ecb9ac;
+  --ecg-linea-fina:#f6d8d0;
+  --acero:#41647d;
+  --verde:#1e6d5b;
+  --ciruela:#6d4462;
+  --rojo:#a63628;
+  --ambar:#b8801f;
+  --borde:#dcdad3;
+  --sombra:0 1px 2px rgba(22,38,46,.06), 0 8px 24px rgba(22,38,46,.05);
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --cuerpo:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{
+  margin:0;background:var(--papel);color:var(--tinta);
+  font-family:var(--cuerpo);font-size:16.5px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.12;margin:0;letter-spacing:-.015em}
+p{margin:0 0 .9em}
+p:last-child{margin-bottom:0}
+a{color:var(--acero)}
+.wrap{max-width:1060px;margin:0 auto;padding:0 22px}
+.eyebrow{
+  font-family:var(--mono);font-size:11.5px;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--tinta-3);
+}
+
+/* ---------- ECG paper ---------- */
+.ecg-papel{
+  background-color:var(--ecg);
+  background-image:
+    repeating-linear-gradient(to right, var(--ecg-linea) 0 1px, transparent 1px 25px),
+    repeating-linear-gradient(to bottom, var(--ecg-linea) 0 1px, transparent 1px 25px),
+    repeating-linear-gradient(to right, var(--ecg-linea-fina) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(to bottom, var(--ecg-linea-fina) 0 1px, transparent 1px 5px);
+}
+
+/* ---------- header ---------- */
+header.barra{
+  position:sticky;top:0;z-index:40;
+  background:rgba(241,240,236,.93);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--borde);
+}
+.barra-int{display:flex;align-items:center;gap:18px;min-height:60px;flex-wrap:wrap}
+.marca{font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:-.01em;white-space:nowrap}
+.marca span{color:var(--rojo)}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto;align-items:center}
+nav.tabs a{
+  font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.09em;
+  text-transform:uppercase;text-decoration:none;color:var(--tinta-2);
+  padding:7px 11px;border-radius:2px;border:1px solid transparent;
+}
+nav.tabs a:hover{background:#fff;border-color:var(--borde)}
+nav.tabs a.activo{background:var(--tinta);color:#fff}
+nav.tabs a.idioma{border-color:var(--ecg-linea);background:var(--ecg);color:var(--rojo)}
+nav.tabs a.idioma:hover{background:#fff}
+
+/* ---------- cover ---------- */
+.portada{border-bottom:1px solid var(--ecg-linea);padding:60px 0 0;overflow:hidden}
+.portada h1{font-size:clamp(2.3rem,6.4vw,4.1rem);font-weight:800;max-width:15ch;margin:14px 0 18px}
+.portada .lede{font-size:clamp(1.02rem,2.2vw,1.2rem);max-width:56ch;color:var(--tinta-2)}
+.trazo{display:block;width:100%;height:130px;margin-top:26px}
+.trazo path{fill:none;stroke:var(--rojo);stroke-width:2.1;stroke-linejoin:round;stroke-linecap:round}
+.trazo .late{stroke-dasharray:2600;stroke-dashoffset:2600;animation:latir 4.2s ease-out .3s forwards}
+@keyframes latir{to{stroke-dashoffset:0}}
+.comofunciona{
+  display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 0;padding:14px 0 18px;
+  border-top:1px dashed var(--ecg-linea);
+}
+.comofunciona p{font-size:14.5px;color:var(--tinta-2);max-width:64ch;margin:0}
+
+/* ---------- sections ---------- */
+section{padding:64px 0 8px}
+.sec-cab{margin-bottom:26px;border-bottom:2px solid var(--tinta);padding-bottom:12px}
+.sec-cab h2{font-size:clamp(1.7rem,4vw,2.5rem);font-weight:700;margin-top:6px}
+.sec-cab .intro{margin-top:12px;max-width:70ch;color:var(--tinta-2)}
+h3.bloque{
+  font-size:1.18rem;font-weight:700;margin:38px 0 14px;
+  display:flex;align-items:baseline;gap:10px;
+}
+h3.bloque::before{
+  content:"";width:22px;height:3px;background:var(--rojo);display:inline-block;flex:none;
+  transform:translateY(-4px);
+}
+
+/* ---------- cards and utilities ---------- */
+.card{background:var(--tarjeta);border:1px solid var(--borde);border-radius:3px;padding:20px 22px;box-shadow:var(--sombra)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:820px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.mini-tit{
+  font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--tinta-3);margin-bottom:7px;display:block;
+}
+.nota{
+  border-left:3px solid var(--ambar);background:#fdf6e6;padding:13px 16px;
+  border-radius:0 3px 3px 0;font-size:15px;margin-top:16px;
+}
+.nota strong{color:#8a5e12}
+.alerta{border-left-color:var(--rojo);background:#fbeeec}
+.alerta strong{color:var(--rojo)}
+.ok{border-left-color:var(--verde);background:#eaf4f0}
+.ok strong{color:var(--verde)}
+ul.limpia{margin:.4em 0 0;padding-left:1.1em}
+ul.limpia li{margin-bottom:.35em}
+.formula{
+  font-family:var(--mono);font-size:15px;background:var(--tinta);color:#fff;
+  padding:11px 14px;border-radius:3px;text-align:center;letter-spacing:.02em;
+}
+table{width:100%;border-collapse:collapse;font-size:14.6px;background:#fff}
+th,td{border:1px solid var(--borde);padding:9px 11px;text-align:left;vertical-align:top}
+thead th{background:var(--tinta);color:#fff;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.09em;text-transform:uppercase;font-weight:600}
+tbody th{background:#f7f6f2;font-weight:600;font-family:var(--cuerpo);width:19%}
+.tabla-scroll{overflow-x:auto;border-radius:3px}
+button{font-family:var(--cuerpo);cursor:pointer}
+.btn{
+  background:var(--tinta);color:#fff;border:1px solid var(--tinta);
+  padding:9px 15px;border-radius:2px;font-size:14px;font-weight:500;
+}
+.btn:hover{background:#0d181d}
+.btn.ghost{background:#fff;color:var(--tinta)}
+.btn.ghost:hover{background:#f3f2ee}
+:focus-visible{outline:2.5px solid var(--acero);outline-offset:2px}
+
+/* ---------- resolution dial ---------- */
+.dial{border:1px solid var(--borde);background:#fff;border-radius:3px;overflow:hidden;box-shadow:var(--sombra)}
+.dial-top{padding:20px 22px 6px}
+.pista{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:14px}
+.pista button{
+  background:none;border:none;border-top:3px solid var(--borde);padding:10px 4px 0;
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--tinta-3);text-align:left;transition:color .2s,border-color .2s;
+}
+.pista button[aria-selected="true"]{color:var(--tinta);border-top-color:var(--activo,var(--tinta))}
+.granos{height:34px;margin-top:14px;border-radius:2px;
+  background-image:radial-gradient(circle at 3px 3px, var(--activo,#4a6e86) 1.7px, transparent 1.8px);
+  background-size:11px 11px;opacity:.85;transition:filter .45s ease, opacity .45s ease}
+.dial-cuerpo{padding:18px 22px 24px;border-top:1px dashed var(--borde)}
+.dial-cuerpo h4{font-size:1.45rem;color:var(--activo,var(--tinta));margin-bottom:4px}
+.dial-preg{font-family:var(--display);font-size:1.05rem;font-weight:600;margin:0 0 14px;color:var(--tinta-2)}
+.dial-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 24px}
+@media(max-width:760px){.dial-grid{grid-template-columns:1fr}}
+.dial-caso{background:#f7f6f2;border-left:3px solid var(--activo,var(--tinta));padding:12px 15px;margin-top:16px;font-size:15px;border-radius:0 3px 3px 0}
+input[type=range]{width:100%;accent-color:var(--tinta)}
+
+/* ---------- decision tree ---------- */
+.arbol{background:#fff;border:1px solid var(--borde);border-radius:3px;padding:22px;box-shadow:var(--sombra)}
+.arbol .paso{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--tinta-3)}
+.arbol .preg{font-family:var(--display);font-size:1.28rem;font-weight:700;margin:8px 0 18px;max-width:46ch}
+.arbol .opts{display:flex;gap:10px;flex-wrap:wrap}
+.arbol .res{border-top:1px dashed var(--borde);margin-top:18px;padding-top:16px}
+.arbol .res h4{font-size:1.3rem}
+.migas{font-family:var(--mono);font-size:11.5px;color:var(--tinta-3);margin-top:14px}
+
+/* ---------- phases ---------- */
+.fases{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:820px){.fases{grid-template-columns:1fr}}
+.fase{background:#fff;border:1px solid var(--borde);border-top:4px solid var(--c);padding:15px 16px;border-radius:3px}
+.fase .n{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--c);text-transform:uppercase}
+.fase h4{font-size:1.02rem;margin:5px 0 8px}
+.fase p{font-size:14.3px;color:var(--tinta-2)}
+
+/* ---------- normal curve ---------- */
+.controles{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
+.controles label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--tinta-3);margin-bottom:5px}
+select{
+  font-family:var(--cuerpo);font-size:14.5px;padding:7px 9px;border:1px solid var(--borde);
+  border-radius:2px;background:#fff;color:var(--tinta);
+}
+.lienzo{width:100%;height:auto;display:block}
+.lectura{font-family:var(--mono);font-size:13.5px;background:#f7f6f2;border:1px solid var(--borde);
+  padding:11px 14px;border-radius:3px;margin-top:12px}
+
+/* ---------- error matrix ---------- */
+.matriz{display:grid;grid-template-columns:130px 1fr 1fr;gap:6px;font-size:14.5px}
+@media(max-width:640px){.matriz{grid-template-columns:1fr}}
+.celda{padding:13px 14px;border-radius:3px;border:1px solid var(--borde);background:#fff}
+.celda.cab{background:var(--tinta);color:#fff;font-family:var(--mono);font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center}
+.celda.buena{background:#eaf4f0;border-color:#bcdcd2}
+.celda.mala{background:#fbeeec;border-color:#e8c4bd}
+.celda b{display:block;font-family:var(--display);font-size:1rem;margin-bottom:3px}
+
+/* ---------- exercises ---------- */
+.item{background:#fff;border:1px solid var(--borde);border-radius:3px;padding:15px 17px;margin-bottom:10px}
+.item .enun{font-weight:500;margin-bottom:10px}
+.item .fila{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.retro{margin-top:10px;font-size:14.6px;padding:10px 13px;border-radius:3px;display:none}
+.retro.bien{display:block;background:#eaf4f0;border-left:3px solid var(--verde)}
+.retro.mal{display:block;background:#fbeeec;border-left:3px solid var(--rojo)}
+.opcion{
+  display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--borde);
+  border-radius:2px;padding:10px 13px;margin-bottom:7px;font-size:15px;color:var(--tinta);
+}
+.opcion:hover{border-color:var(--acero);background:#f7f9fa}
+.opcion.correcta{background:#eaf4f0;border-color:var(--verde);font-weight:500}
+.opcion.incorrecta{background:#fbeeec;border-color:var(--rojo)}
+.opcion:disabled{cursor:default}
+.marcador{
+  position:sticky;bottom:14px;margin-top:18px;background:var(--tinta);color:#fff;
+  padding:13px 18px;border-radius:3px;font-family:var(--mono);font-size:13.5px;
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.revelable{display:none;margin-top:12px;border-top:1px dashed var(--borde);padding-top:12px}
+.revelable.ver{display:block}
+.par{font-family:var(--mono);font-size:14px;background:#f7f6f2;padding:8px 11px;border-radius:2px;margin-bottom:6px}
+
+/* ---------- footer ---------- */
+footer{margin-top:70px;border-top:1px solid var(--borde);background:#fff}
+footer .wrap{padding-top:26px;padding-bottom:34px}
+footer p{font-size:13.6px;color:var(--tinta-3);max-width:70ch}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .trazo .late{stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <div class="wrap barra-int">
+    <div class="marca">Clinical Research Methods <span>·</span> Anáhuac</div>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#scope">1. Scope</a>
+      <a href="#hypothesis">2. Hypothesis</a>
+      <a href="#fundamentals">3. Fundamentals</a>
+      <a href="#practice">4. Self-check</a>
+      <a class="idioma" href="../" hreflang="es" lang="es">Español</a>
+    </nav>
+  </div>
+</header>
+
+<div class="portada ecg-papel">
+  <div class="wrap">
+    <p class="eyebrow">Study tool · Health sciences</p>
+    <h1>From clinical data to conclusion</h1>
+    <p class="lede">Three decisions hold up any research protocol: how far your study can actually go, which claim you are putting to the test, and how much you can trust the number you obtained. This tool walks you through all three, using examples from clinical practice.</p>
+    <svg class="trazo" viewBox="0 0 1200 130" preserveAspectRatio="none" aria-hidden="true">
+      <path class="late" id="trazoECG"></path>
+    </svg>
+    <div class="comofunciona">
+      <p><strong>How to use it:</strong> go in order or jump straight to the topic you need. Anything with a button or a dashed border is interactive: move the dial, change the significance level, simulate 100 studies and work through the exercises. A 10-case self-check closes the tool.</p>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- ============ 1. SCOPE ============ -->
+<section id="scope">
+  <div class="sec-cab">
+    <p class="eyebrow">Module 1</p>
+    <h2>The scope of the research</h2>
+    <p class="intro">Scope is not a box to tick in the protocol: it is the architecture of the study. It defines the depth, the rigor and the final objective, and it follows from two things, what the literature already says and what you actually want to answer. From that single decision come your epidemiological design, your sample size and type, and the measurement and analysis tools you will need.</p>
+  </div>
+
+  <h3 class="bloque">The resolution spectrum</h3>
+  <p style="max-width:70ch;color:var(--tinta-2)">Think of scope the way you think about the focus of a microscope or the resolution of an imaging study. On the left you see something, but it is blurry. On the right you see exactly what it is and why it is there. Move the dial to travel across it.</p>
+
+  <div class="dial" id="dial" style="--activo:#41647d">
+    <div class="dial-top">
+      <p class="eyebrow" style="margin:0">Resolution of the question</p>
+      <input type="range" id="rangoDial" min="0" max="3" step="1" value="0" aria-label="Level of research scope">
+      <div class="pista" role="tablist" id="pistaDial"></div>
+      <div class="granos" id="granos" aria-hidden="true"></div>
+    </div>
+    <div class="dial-cuerpo">
+      <h4 id="dialTitulo"></h4>
+      <p class="dial-preg" id="dialPregunta"></p>
+      <div class="dial-grid">
+        <div><span class="mini-tit">Objective</span><p id="dialObjetivo"></p></div>
+        <div><span class="mini-tit">Handling of variables</span><p id="dialVariables"></p></div>
+        <div><span class="mini-tit">Status of the hypothesis</span><p id="dialHipotesis"></p></div>
+        <div><span class="mini-tit">Typical designs in medicine</span><p id="dialDisenos"></p></div>
+      </div>
+      <div class="dial-caso"><strong>Clinical example.</strong> <span id="dialCaso"></span></div>
+    </div>
+  </div>
+
+  <h3 class="bloque">Methodological alert: spurious correlations</h3>
+  <div class="grid2">
+    <div class="card">
+      <span class="mini-tit">The risk</span>
+      <p>Two variables moving together does not mean one affects the other. A spurious correlation is a real mathematical association with no causal link behind it, almost always because a third variable is hiding in the background.</p>
+      <p style="margin-bottom:0"><strong>A classic from the wards:</strong> patients who receive supplemental oxygen die more often than patients who do not. Oxygen is not killing them; it is prescribed to the sickest patients in the first place. This is called confounding by indication.</p>
+    </div>
+    <div class="card">
+      <span class="mini-tit">How to protect yourself</span>
+      <ul class="limpia">
+        <li>Always ask who else could have caused both things at once (age, severity, comorbidity, socioeconomic status).</li>
+        <li>Check temporal precedence: did the exposure really come before the outcome?</li>
+        <li>Look for biological plausibility, not just a small p value.</li>
+        <li>Remember that adjusting for confounders reduces the problem, it does not eliminate it.</li>
+      </ul>
+      <div class="nota alerta" style="margin-top:14px"><strong>Golden rule:</strong> correlation does not imply causation. Only a controlled experimental design lets you speak about causes with any comfort.</div>
+    </div>
+  </div>
+
+  <h3 class="bloque">Methodological diagnostic matrix</h3>
+  <div class="tabla-scroll">
+    <table>
+      <thead>
+        <tr><th></th><th>Exploratory</th><th>Descriptive</th><th>Correlational</th><th>Explanatory</th></tr>
+      </thead>
+      <tbody>
+        <tr><th>Central question</th><td>What is going on here?</td><td>What exactly is it, and how often?</td><td>Are A and B associated?</td><td>Does A cause B?</td></tr>
+        <tr><th>Handling of variables</th><td>No strict prior definition</td><td>Exhaustive and independent measurement</td><td>Joint quantification of two or more variables</td><td>Active manipulation and control</td></tr>
+        <tr><th>Status of the hypothesis</th><td>Its purpose is to generate them</td><td>Defines descriptive hypotheses</td><td>Tests hypotheses of association</td><td>Tests causal hypotheses</td></tr>
+        <tr><th>Usual design</th><td>Case report, case series, qualitative study, scoping review</td><td>Cross-sectional prevalence study, registry, population survey</td><td>Case control, cohort, prognostic studies</td><td>Randomized controlled trial, animal model, in vitro experiment</td></tr>
+        <tr><th>What it reports</th><td>Narrative description, emerging findings</td><td>Frequencies, prevalence, means, proportions</td><td>OR, RR, HR, correlation and regression coefficients</td><td>Risk difference, NNT, attributable effect</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="bloque">Decision tree</h3>
+  <div class="arbol" id="arbol">
+    <p class="paso" id="arbolPaso">Starting point</p>
+    <p class="preg" id="arbolPreg"></p>
+    <div class="opts" id="arbolOpts"></div>
+    <div class="res" id="arbolRes" hidden></div>
+    <p class="migas" id="arbolMigas"></p>
+  </div>
+  <div class="nota"><strong>Remember:</strong> the best design is not the most sophisticated or the most expensive one, it is the one that answers exactly your question with the resources you have.</div>
+
+  <h3 class="bloque">A real project travels the whole spectrum</h3>
+  <p style="max-width:70ch;color:var(--tinta-2)">The discovery of <em>Helicobacter pylori</em> as a cause of peptic ulcer disease shows how the same problem changes scope as the evidence matures.</p>
+  <div class="fases">
+    <div class="fase" style="--c:#41647d"><p class="n">Phase 1 · Exploratory</p><h4>Something odd on the biopsy</h4><p>A pathologist notices curved bacteria in gastric biopsies from patients with gastritis, at a time when everyone assumed nothing could survive stomach acid. No literature explains it.</p></div>
+    <div class="fase" style="--c:#1e6d5b"><p class="n">Phase 2 · Descriptive</p><h4>How common is it?</h4><p>The organism is cultured and systematically documented: in how many biopsies it appears, in which patients, with which histological findings. Still no claim about causes.</p></div>
+    <div class="fase" style="--c:#6d4462"><p class="n">Phase 3 · Correlational</p><h4>Does it travel with ulcer disease?</h4><p>Studies of patients with and without ulcers show a strong statistical association between the presence of the bacterium and the disease. Whether it is cause, consequence or coincidence remains open.</p></div>
+    <div class="fase" style="--c:#a63628"><p class="n">Phase 4 · Explanatory</p><h4>Manipulate in order to prove</h4><p>Deliberate ingestion of the culture reproduces gastritis, and clinical trials then show that eradicating the bacterium with antibiotics heals the ulcer. Manipulation, control and causation.</p></div>
+  </div>
+</section>
+
+<!-- ============ 2. HYPOTHESIS ============ -->
+<section id="hypothesis">
+  <div class="sec-cab">
+    <p class="eyebrow">Module 2</p>
+    <h2>The hypothesis and how it is tested</h2>
+    <p class="intro">A statistical hypothesis is a claim about a characteristic of one or more populations that can be tested with data. In practice you always work with two competing claims, and statistics only helps you decide whether your data are compatible with one of them.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card" style="border-top:4px solid var(--acero)">
+      <span class="mini-tit">H₀ · null hypothesis</span>
+      <ul class="limpia">
+        <li>States that there is no effect, no difference and no association.</li>
+        <li>It is the hypothesis you try to refute, never the one you confirm.</li>
+        <li>It always includes equality (=, ≤, ≥).</li>
+        <li>Examples: μ treatment = μ placebo, OR = 1, RR = 1, ρ = 0.</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:4px solid var(--rojo)">
+      <span class="mini-tit">H₁ · alternative hypothesis</span>
+      <ul class="limpia">
+        <li>Proposes that an effect, difference or association does exist.</li>
+        <li>It is what the investigator suspects and wants to support.</li>
+        <li>It never includes equality (≠, &lt;, &gt;).</li>
+        <li>Examples: μ treatment ≠ μ placebo, OR &gt; 1, ρ ≠ 0.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 class="bloque">Two-tailed or one-tailed: where the rejection region falls</h3>
+  <p style="max-width:70ch;color:var(--tinta-2)">The direction you give H₁ decides where the rejection region sits and how much evidence you will need. Change the controls and watch how α is distributed under the curve.</p>
+  <div class="card">
+    <div class="controles">
+      <div>
+        <label for="selTipo">Type of test</label>
+        <select id="selTipo">
+          <option value="bi">Two-tailed (H₁: μ ≠ μ₀)</option>
+          <option value="der">One-tailed, right (H₁: μ &gt; μ₀)</option>
+          <option value="izq">One-tailed, left (H₁: μ &lt; μ₀)</option>
+        </select>
+      </div>
+      <div>
+        <label for="selAlfa">Significance level α</label>
+        <select id="selAlfa">
+          <option value="0.10">0.10 (exploratory)</option>
+          <option value="0.05" selected>0.05 (conventional)</option>
+          <option value="0.01">0.01 (demanding, biomedical)</option>
+        </select>
+      </div>
+    </div>
+    <svg class="lienzo" id="curva" viewBox="0 0 640 270" role="img" aria-label="Normal curve with the rejection region shaded"></svg>
+    <p class="lectura" id="lecturaCurva"></p>
+    <div class="nota alerta"><strong>Careful:</strong> switching to a one-tailed test after seeing that the two-tailed one missed significance is p-hacking. Direction is justified before collecting data, with clinical or pathophysiological arguments, and it is written into the protocol.</div>
+  </div>
+
+  <h3 class="bloque">The five steps of hypothesis testing</h3>
+  <div class="grid3">
+    <div class="card"><span class="mini-tit">Step 1</span><p><strong>State H₀ and H₁</strong> in terms of a population parameter, not of your sample.</p></div>
+    <div class="card"><span class="mini-tit">Step 2</span><p><strong>Set α and the test</strong> according to the type of variable, the design and the assumptions.</p></div>
+    <div class="card"><span class="mini-tit">Step 3</span><p><strong>Collect the data</strong> with the sample size you calculated before starting.</p></div>
+    <div class="card"><span class="mini-tit">Step 4</span><p><strong>Compute the test statistic</strong>, its p value and the confidence interval of the effect.</p></div>
+    <div class="card"><span class="mini-tit">Step 5</span><p><strong>Decide</strong>: if p &lt; α you reject H₀; if p ≥ α you do not. Then interpret the clinical magnitude.</p></div>
+    <div class="card ecg-papel" style="box-shadow:none"><span class="mini-tit">What never changes</span><p>Rejecting H₀ does not prove H₁ is true, and failing to reject it does not prove H₀ is true. You are only saying whether your data are comfortable or uncomfortable under the assumption of no effect.</p></div>
+  </div>
+
+  <h3 class="bloque">Exercise: translate the clinical question</h3>
+  <p style="max-width:70ch;color:var(--tinta-2)">Write H₀ and H₁ in your head for each scenario, then check the proposed answer.</p>
+  <div id="ejHipotesis"></div>
+</section>
+
+<!-- ============ 3. FUNDAMENTALS ============ -->
+<section id="fundamentals">
+  <div class="sec-cab">
+    <p class="eyebrow">Module 3</p>
+    <h2>Statistical fundamentals</h2>
+    <p class="intro">These are the concepts most often quoted and most often misread in the medical literature. The goal is not to memorize definitions, but to be able to read a result and know what it is telling you and what it is not.</p>
+  </div>
+
+  <h3 class="bloque">The p value, without the myths</h3>
+  <div class="card">
+    <p style="font-family:var(--display);font-size:1.15rem;font-weight:600;margin-bottom:14px">The p value answers exactly one question: if H₀ were true, how likely would it be to observe a result as extreme as mine, or more extreme?</p>
+    <div class="grid2">
+      <div>
+        <span class="mini-tit">The logic: proof by contradiction</span>
+        <ol class="limpia" style="padding-left:1.3em">
+          <li>You temporarily assume there is no effect.</li>
+          <li>You build every possible result under that assumption.</li>
+          <li>You ask how far from expected your observation landed.</li>
+        </ol>
+        <p style="margin-top:.7em">The whole calculation happens inside that hypothetical world. You never abandon the assumption of H₀ in order to compute it.</p>
+      </div>
+      <div class="ecg-papel" style="padding:14px 16px;border-radius:3px">
+        <span class="mini-tit">Example</span>
+        <p>You treat 10 patients with a new drug and 9 improve within 48 hours, in a condition where spontaneous improvement over that window runs around 50 percent.</p>
+        <p style="font-family:var(--mono);font-size:14px;margin:10px 0 6px">p = P(9 or more improvements | 50% spontaneous improvement) ≈ 0.01</p>
+        <p style="margin-bottom:0">By chance alone this would happen once in a hundred times. That is uncomfortable for H₀, not proof that the drug works.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="bloque">The central confusion, in diagnostic-test language</h3>
+  <p style="max-width:72ch;color:var(--tinta-2)">This is the best available analogy for a medical student, because the mistake is exactly the same one as confusing sensitivity with positive predictive value.</p>
+  <div class="grid2">
+    <div class="card" style="border-top:4px solid var(--verde)">
+      <span class="mini-tit" style="color:var(--verde)">What the p value does answer</span>
+      <p style="font-family:var(--mono);font-size:14.5px">P(extreme data | H₀ true)</p>
+      <p>This is the equivalent of <strong>sensitivity</strong>: the probability of seeing a certain result given a state of the world we have already assumed.</p>
+      <p style="margin-bottom:0">Correct reading of p = 0.03: if the treatment had no effect at all, results like mine would show up in 3 out of every 100 studies.</p>
+    </div>
+    <div class="card" style="border-top:4px solid var(--rojo)">
+      <span class="mini-tit" style="color:var(--rojo)">What the p value does not answer</span>
+      <p style="font-family:var(--mono);font-size:14.5px">P(H₀ true | data)</p>
+      <p>That would be the <strong>positive predictive value</strong>, and computing it requires the prior prevalence, that is, how plausible the hypothesis was before the study.</p>
+      <p style="margin-bottom:0">Incorrect reading of p = 0.03: there is a 3 percent chance that I am wrong. The p value does not say that.</p>
+    </div>
+  </div>
+  <div class="nota"><strong>Why this matters clinically:</strong> just as a highly sensitive test produces many false positives when the disease is rare, a p &lt; 0.05 applied to an implausible hypothesis produces findings that later fail to replicate. The prior plausibility of your hypothesis counts too.</div>
+
+  <h3 class="bloque">Three steps to read any result</h3>
+  <div class="grid3">
+    <div class="card"><span class="mini-tit">1 · Is there a signal?</span><p>Compare p with α. If p &lt; α there is statistical evidence. If p ≥ α there is not enough evidence, which is not the same as evidence that no effect exists.</p></div>
+    <div class="card"><span class="mini-tit">2 · How large is it?</span><p>Compute the effect size (d, r, η², OR, mean difference). A tiny p with a huge n can correspond to a trivial effect. The p value depends on n; the effect size does not.</p></div>
+    <div class="card"><span class="mini-tit">3 · How precise is it?</span><p>Look at the confidence interval. Wide means a lot of uncertainty; narrow means a precise estimate. This is the information most often lost when you read only the p value.</p></div>
+  </div>
+  <div class="nota ok"><strong>An example worth discussing in class:</strong> an antihypertensive lowers systolic pressure with p = 0.001, but the effect is 0.3 mmHg with a 95% CI of 0.1 to 0.5. The p value says there is a signal. The effect size and the interval say it changes nothing clinically.</div>
+
+  <h3 class="bloque">Confidence level and confidence interval</h3>
+  <div class="grid2">
+    <div class="card">
+      <span class="mini-tit">Confidence level (1 − α)</span>
+      <p>The probability that the procedure makes the correct decision of not rejecting H₀ when H₀ is true. It is set before the study begins.</p>
+      <div class="tabla-scroll" style="margin-top:12px">
+        <table>
+          <thead><tr><th>Confidence</th><th>α</th><th>Usual context</th></tr></thead>
+          <tbody>
+            <tr><td>90%</td><td>0.10</td><td>Pilot and exploratory studies</td></tr>
+            <tr><td>95%</td><td>0.05</td><td>Convention in most clinical literature</td></tr>
+            <tr><td>99%</td><td>0.01</td><td>Trials with hard endpoints, multiple analyses</td></tr>
+            <tr><td>99.9%</td><td>0.001</td><td>Genomic and large-scale association studies</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:12px;margin-bottom:0"><strong>Key relationship:</strong> lowering α reduces the risk of a type I error, but you lose power unless you adjust the sample size.</p>
+    </div>
+    <div class="card">
+      <span class="mini-tit">Confidence interval</span>
+      <p>The range of values compatible with your data, within which the true population parameter is estimated to lie.</p>
+      <p class="formula">CI = x̄ ± z(σ/√n)&nbsp;&nbsp;or&nbsp;&nbsp;x̄ ± t(s/√n)</p>
+      <ul class="limpia" style="margin-top:12px">
+        <li>A 95% CI means that if you repeated the study many times, about 95 out of every 100 intervals would contain the true parameter.</li>
+        <li>Wider interval, more uncertainty.</li>
+        <li>Larger n, narrower interval and a more precise estimate.</li>
+        <li>If the CI of a difference includes 0, or the CI of an OR includes 1, the result is compatible with no effect.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4 style="font-family:var(--display);font-size:1.05rem;margin:24px 0 10px">Simulate 100 studies and see it happen</h4>
+  <div class="card">
+    <p style="font-size:15px;color:var(--tinta-2)">Each line is a different study measuring the same thing in a population where the true value is 100. The vertical line marks that true value. Intervals in red miss it, and that happens by chance, not because the investigator did anything wrong.</p>
+    <svg class="lienzo" id="simIC" viewBox="0 0 420 240" role="img" aria-label="One hundred simulated confidence intervals"></svg>
+    <div class="fila" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px">
+      <button class="btn" id="btnSim">Simulate another 100 studies</button>
+      <span class="lectura" id="lecturaIC" style="margin:0"></span>
+    </div>
+  </div>
+
+  <h3 class="bloque">Type I and type II errors</h3>
+  <div class="matriz">
+    <div class="celda cab" style="background:transparent;border:none"></div>
+    <div class="celda cab">Reality: H₀ true (no effect)</div>
+    <div class="celda cab">Reality: H₀ false (there is an effect)</div>
+
+    <div class="celda cab">You do not reject H₀</div>
+    <div class="celda buena"><b>Correct decision</b>Confidence = 1 − α</div>
+    <div class="celda mala"><b>Type II error (β)</b>False negative: a real effect exists and your study fails to detect it.</div>
+
+    <div class="celda cab">You reject H₀</div>
+    <div class="celda mala"><b>Type I error (α)</b>False positive: you conclude there is an effect where there is none.</div>
+    <div class="celda buena"><b>Correct decision</b>Power = 1 − β</div>
+  </div>
+  <div class="grid2" style="margin-top:16px">
+    <div class="card" style="border-left:4px solid var(--rojo)">
+      <span class="mini-tit" style="color:var(--rojo)">Type I error in the clinic</span>
+      <p>Equivalent to a screening test flagging a healthy patient as diseased.</p>
+      <p style="margin-bottom:0"><strong>Consequences:</strong> unnecessary confirmatory workups, treatments without indication, patient anxiety, unjustified spending and, at the level of the literature, recommendations that are later reversed.</p>
+    </div>
+    <div class="card" style="border-left:4px solid var(--acero)">
+      <span class="mini-tit" style="color:var(--acero)">Type II error in the clinic</span>
+      <p>Equivalent to a test that misses the disease in someone who truly has it.</p>
+      <p style="margin-bottom:0"><strong>Consequences:</strong> an intervention that did work gets discarded, treatment is delayed and the problem is underestimated. This is the classic error of underpowered studies.</p>
+    </div>
+  </div>
+  <div class="nota"><strong>A permanent tension:</strong> reducing α increases β if everything else stays the same. The only way to improve both at once is to increase n or reduce the variability of your measurements.</div>
+
+  <h3 class="bloque">Power and sample size</h3>
+  <p style="max-width:72ch;color:var(--tinta-2)">Power (1 − β) is the probability of detecting a real effect when it exists. The minimum accepted convention is 0.80, and it is computed before the first data point is collected, not afterwards.</p>
+  <div class="grid4">
+    <div class="card"><span class="mini-tit">Sample size</span><p>Larger n, greater power. This is the lever you control most.</p></div>
+    <div class="card"><span class="mini-tit">Effect size</span><p>Large effects are detected with fewer patients.</p></div>
+    <div class="card"><span class="mini-tit">Level of α</span><p>A more permissive α raises power, at the cost of more false positives.</p></div>
+    <div class="card"><span class="mini-tit">Variability</span><p>Lower variance, greater power. Measuring well is also design.</p></div>
+  </div>
+
+  <h4 style="font-family:var(--display);font-size:1.05rem;margin:24px 0 10px">Sample size calculator</h4>
+  <div class="card">
+    <div class="controles">
+      <div>
+        <label for="calcTipo">Comparison</label>
+        <select id="calcTipo">
+          <option value="medias">Two independent means</option>
+          <option value="props">Two proportions</option>
+        </select>
+      </div>
+      <div>
+        <label for="calcAlfa">α (two-tailed)</label>
+        <select id="calcAlfa"><option value="1.645">0.10</option><option value="1.960" selected>0.05</option><option value="2.576">0.01</option></select>
+      </div>
+      <div>
+        <label for="calcPot">Power</label>
+        <select id="calcPot"><option value="0.842" selected>80%</option><option value="1.282">90%</option><option value="1.645">95%</option></select>
+      </div>
+    </div>
+    <div class="controles" id="camposMedias">
+      <div><label for="calcDelta">Minimum relevant difference (Δ)</label><input type="number" id="calcDelta" value="5" step="0.1" style="font-family:var(--cuerpo);font-size:14.5px;padding:7px 9px;border:1px solid var(--borde);border-radius:2px;width:150px"></div>
+      <div><label for="calcSigma">Standard deviation (σ)</label><input type="number" id="calcSigma" value="12" step="0.1" style="font-family:var(--cuerpo);font-size:14.5px;padding:7px 9px;border:1px solid var(--borde);border-radius:2px;width:150px"></div>
+    </div>
+    <div class="controles" id="camposProps" style="display:none">
+      <div><label for="calcP1">Proportion in control group (p₁)</label><input type="number" id="calcP1" value="0.30" step="0.01" min="0.01" max="0.99" style="font-family:var(--cuerpo);font-size:14.5px;padding:7px 9px;border:1px solid var(--borde);border-radius:2px;width:150px"></div>
+      <div><label for="calcP2">Proportion in treated group (p₂)</label><input type="number" id="calcP2" value="0.15" step="0.01" min="0.01" max="0.99" style="font-family:var(--cuerpo);font-size:14.5px;padding:7px 9px;border:1px solid var(--borde);border-radius:2px;width:150px"></div>
+    </div>
+    <p class="formula" id="calcFormula"></p>
+    <p class="lectura" id="calcResultado"></p>
+    <p style="font-size:14px;color:var(--tinta-3);margin-top:10px;margin-bottom:0">Approximate calculation using the normal distribution, with no adjustment for losses. In a real protocol you should add 10 to 20 percent for dropouts and use G*Power, R (pwr package) or Python (statsmodels) for more complex designs.</p>
+  </div>
+
+  <h3 class="bloque">Effect size</h3>
+  <p style="max-width:72ch;color:var(--tinta-2)">It measures the magnitude of the phenomenon or the strength of the relationship between variables. It goes beyond the p value because it speaks about practical relevance, and it does not depend on sample size.</p>
+  <div class="tabla-scroll">
+    <table>
+      <thead><tr><th>Measure</th><th>Used in</th><th>Small</th><th>Medium</th><th>Large</th></tr></thead>
+      <tbody>
+        <tr><td>Cohen's d</td><td>Comparison of two means (Student's t)</td><td>0.2</td><td>0.5</td><td>0.8</td></tr>
+        <tr><td>Pearson's r</td><td>Correlations</td><td>0.1</td><td>0.3</td><td>0.5</td></tr>
+        <tr><td>η² (eta squared)</td><td>ANOVA</td><td>0.01</td><td>0.06</td><td>0.14</td></tr>
+        <tr><td>Cohen's f</td><td>ANOVA and regression</td><td>0.10</td><td>0.25</td><td>0.40</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="nota"><strong>In medicine we also use:</strong> risk difference, relative risk, odds ratio and number needed to treat (NNT). An NNT of 8 says something far more useful at the bedside than p &lt; 0.05, because it translates the effect into how many people you must treat to prevent one outcome.</div>
+
+  <h3 class="bloque">Variables and measurement scales</h3>
+  <div class="grid2">
+    <div class="card">
+      <span class="mini-tit">Quantitative</span>
+      <p><strong>Discrete:</strong> countable whole numbers. Number of hospital admissions, number of seizures per month.</p>
+      <p style="margin-bottom:0"><strong>Continuous:</strong> any value within a range. Weight, height, serum creatinine, prothrombin time.</p>
+    </div>
+    <div class="card">
+      <span class="mini-tit">Qualitative</span>
+      <p><strong>Nominal:</strong> categories with no order. Blood type, hospital service, causative organism.</p>
+      <p style="margin-bottom:0"><strong>Ordinal:</strong> categories with order but unequal distances. Tumor stage, NYHA functional class, pain scale.</p>
+    </div>
+  </div>
+  <div class="tabla-scroll" style="margin-top:16px">
+    <table>
+      <thead><tr><th>Scale</th><th>What it allows</th><th>Valid statistics</th><th>Clinical example</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Nominal</strong></td><td>Classify, with no hierarchy</td><td>Frequencies, mode, χ²</td><td>ABO blood group, type of fracture</td></tr>
+        <tr><td><strong>Ordinal</strong></td><td>Rank, without equal distances</td><td>Median, percentiles, nonparametric tests</td><td>Cancer stage, NYHA functional class, pain scale</td></tr>
+        <tr><td><strong>Interval</strong></td><td>Rank with equal distances, no absolute zero</td><td>Mean, standard deviation, correlation</td><td>Temperature in degrees Celsius, calendar year</td></tr>
+        <tr><td><strong>Ratio</strong></td><td>All of the above plus absolute zero and ratios</td><td>All, including percentages and ratios</td><td>Blood pressure, hemoglobin, weight, length of stay</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="nota"><strong>Why it matters:</strong> the scale determines the test. Comparing medians of an ordinal scale with a Student's t test is one of the most frequent mistakes in undergraduate theses, because it assumes equal distances between categories that do not have them.</div>
+
+  <h4 style="font-family:var(--display);font-size:1.05rem;margin:24px 0 10px">Exercise: classify each variable</h4>
+  <div id="ejVariables"></div>
+</section>
+
+<!-- ============ 4. SELF-CHECK ============ -->
+<section id="practice">
+  <div class="sec-cab">
+    <p class="eyebrow">Module 4</p>
+    <h2>Self-check: 10 cases</h2>
+    <p class="intro">Each item resembles what you will actually meet while reading a paper or reviewing a protocol. Choose one option and you will get the explanation right away.</p>
+  </div>
+  <div id="quiz"></div>
+  <div class="marcador" id="marcador" aria-live="polite">
+    <span id="marcadorTexto">No answers yet</span>
+    <button class="btn ghost" id="btnReiniciar" style="padding:4px 12px">Reset</button>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="eyebrow">Teaching material</p>
+    <p style="margin-top:8px">Support tool for the Clinical Research Methods course, School of International Medicine, Universidad Anáhuac Cancún. Examples are illustrative and do not replace clinical practice guidelines or the advice of a methodologist. Sample size calculations are normal-distribution approximations, useful for teaching and for a first protocol estimate.</p>
+    <p style="margin-top:10px"><a href="../">Ver esta herramienta en español</a></p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- ECG trace ---------- */
+  (function(){
+    var p = document.getElementById("trazoECG");
+    if(!p) return;
+    var d = "M0,72 ";
+    for(var b=0;b<6;b++){
+      var x = b*200;
+      d += "L"+(x+34)+",72 L"+(x+44)+",62 L"+(x+54)+",72 L"+(x+70)+",72 "+
+           "L"+(x+76)+",78 L"+(x+84)+",20 L"+(x+92)+",112 L"+(x+100)+",66 L"+(x+108)+",72 "+
+           "L"+(x+132)+",72 L"+(x+146)+",52 L"+(x+160)+",72 L"+(x+200)+",72 ";
+    }
+    p.setAttribute("d", d);
+  })();
+
+  /* ---------- active navigation ---------- */
+  (function(){
+    var enlaces = Array.prototype.slice.call(document.querySelectorAll("nav.tabs a:not(.idioma)"));
+    var secciones = enlaces.map(function(a){ return document.querySelector(a.getAttribute("href")); });
+    if(!("IntersectionObserver" in window)) return;
+    var obs = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(e.isIntersecting){
+          enlaces.forEach(function(a,i){ a.classList.toggle("activo", secciones[i]===e.target); });
+        }
+      });
+    },{rootMargin:"-72px 0px -70% 0px"});
+    secciones.forEach(function(s){ if(s) obs.observe(s); });
+  })();
+
+  /* ---------- resolution dial ---------- */
+  var ALCANCES = [
+    {
+      nombre:"Exploratory", color:"#41647d",
+      pregunta:"What is going on here?",
+      objetivo:"To approach problems that are barely studied or phenomena nobody has described before. Its purpose is to generate hypotheses, not to test them.",
+      variables:"No strict prior definition. You document whatever appears and adjust course as findings emerge.",
+      hipotesis:"They do not exist yet. The product of the study is the set of hypotheses others will test.",
+      disenos:"Case report, case series, qualitative study, scoping review, pilot study.",
+      caso:"An emergency department sees seven young patients within two weeks with severe pneumonia, no identified organism and no obvious shared risk factors. No literature describes it. The goal is to document carefully what is observed and to propose possible explanations."
+    },
+    {
+      nombre:"Descriptive", color:"#1e6d5b",
+      pregunta:"What exactly is it, and how often does it occur?",
+      objetivo:"To specify the properties, characteristics and dimensions of the phenomenon: who, where, how much and when.",
+      variables:"They are measured exhaustively and independently. The purpose is not to state how they relate to each other.",
+      hipotesis:"Descriptive hypotheses: you estimate a parameter (a prevalence, a mean), not a relationship.",
+      disenos:"Cross-sectional prevalence study, hospital registry, census, population survey.",
+      caso:"Determining the prevalence of arterial hypertension among adults in a health district and describing it by age group, sex and municipality. It is a census of the problem, without yet looking for its causes."
+    },
+    {
+      nombre:"Correlational", color:"#6d4462",
+      pregunta:"Are these two variables associated?",
+      objetivo:"To establish the degree of statistical association between two or more variables in a particular context, and to allow prediction.",
+      variables:"Each variable is first measured separately, then their linkage is quantified mathematically.",
+      hipotesis:"Prior hypotheses of association are tested, often directional ones.",
+      disenos:"Case control, cohort, prognostic studies, regression and prediction models.",
+      caso:"Following a cohort of healthy adults for ten years to estimate the association between baseline body mass index and the onset of type 2 diabetes, reporting the hazard ratio with its confidence interval."
+    },
+    {
+      nombre:"Explanatory", color:"#a63628",
+      pregunta:"Does A cause B, and under what conditions?",
+      objetivo:"To account for the direct causes of events: why the phenomenon occurs and under which conditions it appears.",
+      variables:"Active manipulation of the independent variable and rigorous control of everything else.",
+      hipotesis:"Causal hypotheses are tested, with clearly separated experimental and control groups.",
+      disenos:"Randomized controlled trial, animal model, in vitro experiment.",
+      caso:"Randomly assigning hypertensive patients to the new drug or placebo, double blinded, and comparing the incidence of cardiovascular events at five years. What is manipulated is the treatment; everything else is distributed by chance."
+    }
+  ];
+
+  (function(){
+    var rango = document.getElementById("rangoDial");
+    var pista = document.getElementById("pistaDial");
+    var dial = document.getElementById("dial");
+    if(!rango) return;
+
+    ALCANCES.forEach(function(a,i){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = (i+1)+". "+a.nombre;
+      b.setAttribute("role","tab");
+      b.addEventListener("click", function(){ rango.value = i; pinta(i); });
+      pista.appendChild(b);
+    });
+
+    function pinta(i){
+      var a = ALCANCES[i];
+      dial.style.setProperty("--activo", a.color);
+      document.getElementById("dialTitulo").textContent = a.nombre;
+      document.getElementById("dialPregunta").textContent = a.pregunta;
+      document.getElementById("dialObjetivo").textContent = a.objetivo;
+      document.getElementById("dialVariables").textContent = a.variables;
+      document.getElementById("dialHipotesis").textContent = a.hipotesis;
+      document.getElementById("dialDisenos").textContent = a.disenos;
+      document.getElementById("dialCaso").textContent = a.caso;
+      var g = document.getElementById("granos");
+      g.style.filter = "blur("+(5.5 - i*1.8)+"px)";
+      g.style.opacity = String(0.5 + i*0.16);
+      Array.prototype.forEach.call(pista.children, function(b,j){
+        b.setAttribute("aria-selected", j===i ? "true" : "false");
+        b.style.borderTopColor = j<=i ? a.color : "";
+      });
+    }
+    rango.addEventListener("input", function(){ pinta(parseInt(rango.value,10)); });
+    pinta(0);
+  })();
+
+  /* ---------- decision tree ---------- */
+  (function(){
+    var NODOS = {
+      inicio:{paso:"Starting point", preg:"Is there solid prior literature on your phenomenon?",
+        opts:[{t:"Yes, the topic is documented",v:"q2"},{t:"No, almost nothing is published",v:"rExp"}]},
+      q2:{paso:"Question 2", preg:"Is your main goal to measure baseline parameters, frequencies or characteristics, without looking for relationships between variables?",
+        opts:[{t:"Yes, I want to describe the picture",v:"rDesc"},{t:"No, I care about relationships",v:"q3"}]},
+      q3:{paso:"Question 3", preg:"Do you want to know whether one variable is associated with another, or predicts it, by observing what happens naturally?",
+        opts:[{t:"Yes, without intervening",v:"rCorr"},{t:"No, I want to intervene",v:"q4"}]},
+      q4:{paso:"Question 4", preg:"Can you actively manipulate the exposure or treatment, assign it, and control the remaining conditions?",
+        opts:[{t:"Yes, I can assign and control",v:"rExpl"},{t:"No, it is not feasible or ethical",v:"rVuelta"}]},
+      rExp:{res:0}, rDesc:{res:1}, rCorr:{res:2}, rExpl:{res:3},
+      rVuelta:{especial:true}
+    };
+    var paso = document.getElementById("arbolPaso");
+    var preg = document.getElementById("arbolPreg");
+    var opts = document.getElementById("arbolOpts");
+    var res  = document.getElementById("arbolRes");
+    var migas= document.getElementById("arbolMigas");
+    if(!paso) return;
+    var ruta = [];
+
+    function ir(id){
+      var n = NODOS[id];
+      res.hidden = true; res.innerHTML = "";
+      opts.innerHTML = "";
+      if(n.opts){
+        paso.textContent = n.paso;
+        preg.textContent = n.preg;
+        n.opts.forEach(function(o){
+          var b = document.createElement("button");
+          b.type="button"; b.className="btn ghost"; b.textContent=o.t;
+          b.addEventListener("click", function(){ ruta.push(o.t); ir(o.v); });
+          opts.appendChild(b);
+        });
+      } else {
+        paso.textContent = "Result";
+        preg.textContent = "Your question calls for this scope:";
+        res.hidden = false;
+        if(n.especial){
+          res.innerHTML = '<h4 style="color:var(--ambar)">Go back to your question</h4>'+
+            '<p>If you want to talk about causes but cannot assign the exposure, your study will not be explanatory no matter what you call it. You have two honest options: stay with a well-executed correlational scope, controlling for confounders, or redesign the question toward something you really can manipulate in an experimental model.</p>';
+        } else {
+          var a = ALCANCES[n.res];
+          res.innerHTML = '<h4 style="color:'+a.color+'">'+a.nombre+' scope</h4>'+
+            '<p><strong>Question it answers:</strong> '+a.pregunta+'</p>'+
+            '<p><strong>Typical designs:</strong> '+a.disenos+'</p>'+
+            '<p style="margin-bottom:0"><strong>Example:</strong> '+a.caso+'</p>';
+        }
+        var b = document.createElement("button");
+        b.type="button"; b.className="btn"; b.textContent="Start over";
+        b.addEventListener("click", function(){ ruta=[]; ir("inicio"); });
+        opts.appendChild(b);
+      }
+      migas.textContent = ruta.length ? "Your path: "+ruta.join("  →  ") : "";
+    }
+    ir("inicio");
+  })();
+
+  /* ---------- normal curve and rejection region ---------- */
+  (function(){
+    var Z = {"0.10":{bi:1.645, uni:1.282},"0.05":{bi:1.960, uni:1.645},"0.01":{bi:2.576, uni:2.326}};
+    var svg = document.getElementById("curva");
+    var selTipo = document.getElementById("selTipo");
+    var selAlfa = document.getElementById("selAlfa");
+    var lectura = document.getElementById("lecturaCurva");
+    if(!svg) return;
+    var X0=320, ESC=64, BASE=225, ALTO=178;
+    function x(z){ return X0 + z*ESC; }
+    function y(z){ return BASE - ALTO*Math.exp(-z*z/2); }
+    function curva(a,b){
+      var d="", primero=true;
+      for(var z=a; z<=b+0.0001; z+=0.04){
+        d += (primero?"M":"L") + x(z).toFixed(1) + "," + y(z).toFixed(1) + " ";
+        primero=false;
+      }
+      return d;
+    }
+    function pinta(){
+      var tipo = selTipo.value, alfa = selAlfa.value;
+      var zc = tipo==="bi" ? Z[alfa].bi : Z[alfa].uni;
+      var partes = [];
+      partes.push('<line x1="'+x(-4.2)+'" y1="'+BASE+'" x2="'+x(4.2)+'" y2="'+BASE+'" stroke="#16262e" stroke-width="1.2"/>');
+      function cola(desde,hasta,etiqueta,px){
+        var d = "M"+x(desde)+","+BASE+" "+curva(desde,hasta).replace(/^M/,"L")+"L"+x(hasta)+","+BASE+" Z";
+        partes.push('<path d="'+d+'" fill="#a63628" fill-opacity="0.75"/>');
+        partes.push('<text x="'+px+'" y="'+(BASE-8)+'" font-family="IBM Plex Mono, monospace" font-size="13" fill="#a63628" text-anchor="middle">'+etiqueta+'</text>');
+      }
+      if(tipo==="bi"){
+        cola(-4.2,-zc,"α/2", x(-zc)-24);
+        cola(zc,4.2,"α/2", x(zc)+24);
+      } else if(tipo==="der"){
+        cola(zc,4.2,"α", x(zc)+20);
+      } else {
+        cola(-4.2,-zc,"α", x(-zc)-20);
+      }
+      partes.push('<path d="'+curva(-4.2,4.2)+'" fill="none" stroke="#16262e" stroke-width="2.2"/>');
+      partes.push('<text x="'+X0+'" y="'+(BASE-70)+'" font-family="IBM Plex Sans, sans-serif" font-size="14" fill="#3f5763" text-anchor="middle">Do not reject H₀</text>');
+      [[-zc],[zc]].forEach(function(par){
+        var z = par[0];
+        if(tipo==="der" && z<0) return;
+        if(tipo==="izq" && z>0) return;
+        partes.push('<line x1="'+x(z)+'" y1="'+y(z)+'" x2="'+x(z)+'" y2="'+BASE+'" stroke="#16262e" stroke-width="1" stroke-dasharray="3 3"/>');
+        partes.push('<text x="'+x(z)+'" y="'+(BASE+20)+'" font-family="IBM Plex Mono, monospace" font-size="12" fill="#16262e" text-anchor="middle">z = '+(z>0?"+":"")+z.toFixed(3)+'</text>');
+      });
+      partes.push('<text x="'+X0+'" y="'+(BASE+20)+'" font-family="IBM Plex Mono, monospace" font-size="12" fill="#6d838d" text-anchor="middle">0</text>');
+      svg.innerHTML = partes.join("");
+
+      var texto;
+      if(tipo==="bi"){
+        texto = "Two-tailed with α = "+alfa+": the rejection region is split between both tails, "+(parseFloat(alfa)/2).toFixed(3)+
+                " on each side. You can detect differences in either direction and you need an absolute z value greater than "+zc.toFixed(3)+
+                ". It is the conservative option and the one expected by default in clinical journals.";
+      } else {
+        texto = "One-tailed with α = "+alfa+": the whole α sits in a single tail, with a critical point at z = "+
+                (tipo==="izq"?"\u2212":"+")+zc.toFixed(3)+". You gain power in that direction, but you go blind to an effect the other way, "+
+                "even if the treatment turns out to be harmful. It is only justified with a prior argument declared in the protocol.";
+      }
+      lectura.textContent = texto;
+    }
+    selTipo.addEventListener("change", pinta);
+    selAlfa.addEventListener("change", pinta);
+    pinta();
+  })();
+
+  /* ---------- simulation of 100 confidence intervals ---------- */
+  (function(){
+    var svg = document.getElementById("simIC");
+    var btn = document.getElementById("btnSim");
+    var lectura = document.getElementById("lecturaIC");
+    if(!svg) return;
+    var MU=100, SIGMA=10, N=25, SE=SIGMA/Math.sqrt(N);
+    function normal(){
+      var u=0,v=0;
+      while(u===0) u=Math.random();
+      while(v===0) v=Math.random();
+      return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+    }
+    function px(valor){ return 20 + (valor-88)/24*380; }
+    function correr(){
+      var partes=[], fallos=0;
+      partes.push('<line x1="'+px(MU)+'" y1="6" x2="'+px(MU)+'" y2="222" stroke="#16262e" stroke-width="1.6"/>');
+      partes.push('<text x="'+px(MU)+'" y="236" font-family="IBM Plex Mono, monospace" font-size="11" fill="#16262e" text-anchor="middle">true value = 100</text>');
+      for(var i=0;i<100;i++){
+        var media = MU + normal()*SE;
+        var lo = media - 1.96*SE, hi = media + 1.96*SE;
+        var dentro = (lo <= MU && MU <= hi);
+        if(!dentro) fallos++;
+        var yy = 8 + i*2.1;
+        partes.push('<line x1="'+px(lo).toFixed(1)+'" y1="'+yy.toFixed(1)+'" x2="'+px(hi).toFixed(1)+'" y2="'+yy.toFixed(1)+
+          '" stroke="'+(dentro?"#4a7f93":"#a63628")+'" stroke-width="'+(dentro?1.3:2)+'" stroke-opacity="'+(dentro?0.75:1)+'"/>');
+      }
+      svg.innerHTML = partes.join("");
+      lectura.textContent = (100-fallos)+" of 100 intervals contain the true value, "+fallos+" miss it.";
+    }
+    btn.addEventListener("click", correr);
+    correr();
+  })();
+
+  /* ---------- sample size calculator ---------- */
+  (function(){
+    var tipo=document.getElementById("calcTipo"), alfa=document.getElementById("calcAlfa"), pot=document.getElementById("calcPot");
+    var cm=document.getElementById("camposMedias"), cp=document.getElementById("camposProps");
+    var delta=document.getElementById("calcDelta"), sigma=document.getElementById("calcSigma");
+    var p1=document.getElementById("calcP1"), p2=document.getElementById("calcP2");
+    var salida=document.getElementById("calcResultado"), formula=document.getElementById("calcFormula");
+    if(!tipo) return;
+    function calcular(){
+      var za=parseFloat(alfa.value), zb=parseFloat(pot.value), n;
+      if(tipo.value==="medias"){
+        cm.style.display="flex"; cp.style.display="none";
+        formula.textContent = "n per group = 2 (z(α/2) + z(β))² σ² / Δ²";
+        var d=parseFloat(delta.value), s=parseFloat(sigma.value);
+        if(!d || !s){ salida.textContent="Enter a difference and a standard deviation greater than zero."; return; }
+        n = 2*Math.pow(za+zb,2)*Math.pow(s,2)/Math.pow(d,2);
+        n = Math.ceil(n);
+        salida.textContent = "You need "+n+" patients per group ("+(2*n)+" in total) to detect a difference of "+d+
+          " units with σ = "+s+". Allowing for 15% loss to follow-up, you would recruit about "+Math.ceil(n/0.85)+" per group.";
+      } else {
+        cm.style.display="none"; cp.style.display="flex";
+        formula.textContent = "n per group = (z(α/2) + z(β))² [p₁(1−p₁) + p₂(1−p₂)] / (p₁ − p₂)²";
+        var a=parseFloat(p1.value), b=parseFloat(p2.value);
+        if(!(a>0&&a<1)||!(b>0&&b<1)||a===b){ salida.textContent="Enter two different proportions between 0 and 1."; return; }
+        n = Math.pow(za+zb,2)*(a*(1-a)+b*(1-b))/Math.pow(a-b,2);
+        n = Math.ceil(n);
+        salida.textContent = "You need "+n+" patients per group ("+(2*n)+" in total) to detect the change from "+
+          (a*100).toFixed(0)+"% to "+(b*100).toFixed(0)+"%. Allowing for 15% loss to follow-up, you would recruit about "+Math.ceil(n/0.85)+" per group.";
+      }
+    }
+    [tipo,alfa,pot,delta,sigma,p1,p2].forEach(function(el){
+      el.addEventListener("change", calcular); el.addEventListener("input", calcular);
+    });
+    calcular();
+  })();
+
+  /* ---------- hypothesis exercise ---------- */
+  (function(){
+    var CASOS = [
+      {
+        esc:"You want to know whether a new antibiotic regimen shortens the length of hospital stay in community-acquired pneumonia, compared with the standard regimen.",
+        h0:"H₀: μ days new regimen = μ days standard regimen",
+        h1:"H₁: μ days new regimen ≠ μ days standard regimen",
+        nota:"Two-tailed, because a new regimen could also lengthen the stay, and that is information you need to be able to detect."
+      },
+      {
+        esc:"You are analyzing whether smoking is associated with severe periodontal disease in a sample of outpatients.",
+        h0:"H₀: OR = 1 (no association between smoking and severe periodontal disease)",
+        h1:"H₁: OR ≠ 1 (an association exists)",
+        nota:"Even though the literature suggests smoking raises the risk, the test stays two-tailed unless you declare the direction in the protocol beforehand."
+      },
+      {
+        esc:"You are evaluating whether a cardiac rehabilitation program improves the distance covered in the 6-minute walk test, measured before and after in the same patients.",
+        h0:"H₀: μ of the difference (after minus before) = 0",
+        h1:"H₁: μ of the difference ≠ 0",
+        nota:"This is a paired comparison: the unit of analysis is the within-patient difference, not two independent groups."
+      },
+      {
+        esc:"You want to know whether the proportion of patients with adequate glycemic control differs across three primary care clinics.",
+        h0:"H₀: p₁ = p₂ = p₃ (the proportion under control is the same in all three clinics)",
+        h1:"H₁: at least one proportion differs from the others",
+        nota:"With more than two groups, H₁ does not tell you which one differs. If you reject H₀ you need post hoc comparisons with correction for multiple testing."
+      }
+    ];
+    var cont = document.getElementById("ejHipotesis");
+    if(!cont) return;
+    CASOS.forEach(function(c,i){
+      var div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = '<p class="enun">'+(i+1)+". "+c.esc+'</p>'+
+        '<button type="button" class="btn ghost">Show a proposed answer</button>'+
+        '<div class="revelable"><p class="par">'+c.h0+'</p><p class="par">'+c.h1+'</p>'+
+        '<p style="font-size:14.6px;margin:0;color:var(--tinta-2)"><strong>Note:</strong> '+c.nota+'</p></div>';
+      var btn = div.querySelector("button"), rev = div.querySelector(".revelable");
+      btn.addEventListener("click", function(){
+        var abierto = rev.classList.toggle("ver");
+        btn.textContent = abierto ? "Hide answer" : "Show a proposed answer";
+      });
+      cont.appendChild(div);
+    });
+  })();
+
+  /* ---------- variables exercise ---------- */
+  (function(){
+    var VARS = [
+      {v:"ABO blood group", r:"Nominal", e:"These are categories with no hierarchy: A is neither greater nor better than O."},
+      {v:"Glasgow Coma Scale (3 to 15)", r:"Ordinal", e:"There is a clear order, but the distance between 7 and 8 is not equivalent to the distance between 13 and 14."},
+      {v:"Body temperature in degrees Celsius", r:"Interval", e:"Distances are equal, but zero does not mean absence of temperature, so you cannot say 38 °C is twice as hot as 19 °C."},
+      {v:"Systolic blood pressure in mmHg", r:"Ratio", e:"It has a true absolute zero and allows ratios: 140 mmHg really is twice 70 mmHg."},
+      {v:"Clinical cancer stage (I to IV)", r:"Ordinal", e:"It ranks severity, but the jump from I to II is not quantitatively equal to the jump from III to IV."},
+      {v:"Number of hospital admissions in the past year", r:"Ratio", e:"A discrete quantitative variable with an absolute zero: zero admissions means none."},
+      {v:"Hospital service the patient is admitted to", r:"Nominal", e:"Internal medicine, surgery and pediatrics are categories with no order."},
+      {v:"Hemoglobin concentration in g/dL", r:"Ratio", e:"A continuous scale with absolute zero, allowing means, ratios and percentage change."}
+    ];
+    var cont = document.getElementById("ejVariables");
+    if(!cont) return;
+    var OPC = ["Nominal","Ordinal","Interval","Ratio"];
+    VARS.forEach(function(item,i){
+      var div = document.createElement("div");
+      div.className = "item";
+      var sel = '<select aria-label="Scale for '+item.v+'"><option value="">Choose a scale</option>'+
+        OPC.map(function(o){ return '<option>'+o+'</option>'; }).join("")+'</select>';
+      div.innerHTML = '<p class="enun">'+(i+1)+". "+item.v+'</p><div class="fila">'+sel+
+        '<button type="button" class="btn ghost">Check</button></div><div class="retro"></div>';
+      var select = div.querySelector("select"), btn = div.querySelector("button"), retro = div.querySelector(".retro");
+      btn.addEventListener("click", function(){
+        if(!select.value){ retro.className="retro mal"; retro.textContent="Choose a scale before checking."; return; }
+        if(select.value===item.r){
+          retro.className="retro bien";
+          retro.innerHTML = "<strong>Correct.</strong> "+item.e;
+        } else {
+          retro.className="retro mal";
+          retro.innerHTML = "<strong>Not "+select.value.toLowerCase()+".</strong> It is a "+item.r.toLowerCase()+" scale. "+item.e;
+        }
+      });
+      cont.appendChild(div);
+    });
+  })();
+
+  /* ---------- self-check ---------- */
+  (function(){
+    var Q = [
+      {
+        p:"A resident wants to document the frequency and distribution of healthcare-associated infections in the hospital over the past year, without yet looking for associated factors. What is the scope of the study?",
+        o:["Exploratory","Descriptive","Correlational","Explanatory"], c:1,
+        e:"Variables are being measured exhaustively and independently in order to characterize the problem, without quantifying relationships or manipulating anything. It is a census of the phenomenon."
+      },
+      {
+        p:"A trial reports p = 0.04 for the difference between treatment and placebo. Which is the correct reading?",
+        o:["There is a 4% chance that the treatment does not work",
+           "If the treatment had no effect, results as extreme as this would occur in 4 out of every 100 studies",
+           "The treatment works in 96% of patients",
+           "There is a 96% probability that the alternative hypothesis is true"], c:1,
+        e:"The p value is P(extreme data | H₀ true). The other three options invert the conditional, which is the same mistake as confusing sensitivity with positive predictive value."
+      },
+      {
+        p:"A study of 18 patients finds no difference between two analgesics (p = 0.28). Which conclusion is most prudent?",
+        o:["The analgesics are equivalent",
+           "The study proves there is no effect",
+           "There is not enough evidence to reject H₀, and with that n the study was probably underpowered",
+           "The test should be repeated with α = 0.10 so it turns out significant"], c:2,
+        e:"Absence of evidence is not evidence of absence. With small samples, a nonsignificant result is compatible both with a null effect and with a real effect the study had no power to detect. Changing α after seeing the data is p-hacking."
+      },
+      {
+        p:"The 95% CI for the difference in systolic pressure between two groups runs from −1.2 to 6.8 mmHg. What do you conclude?",
+        o:["The result is significant because the interval is narrow",
+           "The interval includes zero, so the data are compatible with no effect and also with effects of up to 6.8 mmHg",
+           "The true effect is exactly 2.8 mmHg",
+           "The study is poorly conducted"], c:1,
+        e:"When the CI of a difference crosses zero, the result does not reach significance at 5%, but the valuable information is the range: the uncertainty still allows a moderate benefit. That calls for more patients, not for discarding the effect."
+      },
+      {
+        p:"In a screening program, concluding that a healthy patient has the disease is statistically equivalent to:",
+        o:["Type II error (β)","Type I error (α)","Loss of power","Selection bias"], c:1,
+        e:"A type I error is the false positive: rejecting H₀ (here, the healthy state) when it was actually true. Its consequences are unnecessary workups, treatment without indication and patient anxiety."
+      },
+      {
+        p:"Which of these designs supports a causal claim most solidly?",
+        o:["Case series of 30 patients",
+           "Cross-sectional study of 5,000 people",
+           "Prospective cohort followed for 10 years",
+           "Randomized controlled trial"], c:3,
+        e:"Only the experimental design actively manipulates the exposure and distributes known and unknown confounders by chance. The cohort gives you temporal precedence, which helps a great deal, but does not eliminate residual confounding."
+      },
+      {
+        p:"The New York Heart Association functional class (I to IV) is a variable measured on which scale?",
+        o:["Nominal","Ordinal","Interval","Ratio"], c:1,
+        e:"There is an order of severity, but the distances between classes are neither equal nor measurable. That is why it is summarized with a median and analyzed with nonparametric tests, not with means."
+      },
+      {
+        p:"A study of 40,000 participants reports p < 0.001 for a 0.4 mmHg reduction in blood pressure. How do you interpret it?",
+        o:["A statistically significant and clinically irrelevant finding",
+           "An important finding that should change practice",
+           "The study has a calculation error",
+           "The effect is large because the p value is very small"], c:0,
+        e:"With a huge n, minimal differences reach significance. The p value depends on sample size; the effect size does not. Both should always be reported."
+      },
+      {
+        p:"To compare mean glycated hemoglobin between two groups, the correct null hypothesis is:",
+        o:["H₀: μ₁ ≠ μ₂","H₀: μ₁ = μ₂","H₀: x̄₁ = x̄₂","H₀: the treatment works"], c:1,
+        e:"The null always includes equality and is stated about population parameters (μ), not about the sample means (x̄), which are precisely what you are about to observe."
+      },
+      {
+        p:"An investigator ran a two-tailed test, obtained p = 0.07 and decided to report it as one-tailed to reach p = 0.035. This is:",
+        o:["A valid decision if the direction was expected",
+           "A way of gaining power at no cost",
+           "P-hacking: directionality must be justified and declared before seeing the data",
+           "An adjustment for multiple comparisons"], c:2,
+        e:"Changing the decision rule after seeing the result inflates the real type I error well above the declared α. The direction of H₁ is justified with prior clinical arguments and registered in the protocol."
+      }
+    ];
+    var cont = document.getElementById("quiz");
+    var texto = document.getElementById("marcadorTexto");
+    var reinicio = document.getElementById("btnReiniciar");
+    if(!cont) return;
+    var respondidas = 0, aciertos = 0;
+
+    function marcador(){
+      texto.textContent = respondidas===0 ? "No answers yet"
+        : "Answered "+respondidas+" of "+Q.length+"  ·  correct "+aciertos+"  ·  "+Math.round(aciertos/respondidas*100)+"%";
+    }
+    function construir(){
+      cont.innerHTML = ""; respondidas=0; aciertos=0; marcador();
+      Q.forEach(function(q,i){
+        var div = document.createElement("div");
+        div.className = "item";
+        var html = '<p class="enun">'+(i+1)+". "+q.p+'</p>';
+        q.o.forEach(function(op,j){ html += '<button type="button" class="opcion" data-j="'+j+'">'+op+'</button>'; });
+        html += '<div class="retro"></div>';
+        div.innerHTML = html;
+        var retro = div.querySelector(".retro");
+        var botones = Array.prototype.slice.call(div.querySelectorAll(".opcion"));
+        botones.forEach(function(b){
+          b.addEventListener("click", function(){
+            var j = parseInt(b.dataset.j,10);
+            botones.forEach(function(x){ x.disabled = true; });
+            botones[q.c].classList.add("correcta");
+            respondidas++;
+            if(j===q.c){ aciertos++; retro.className="retro bien"; retro.innerHTML="<strong>Correct.</strong> "+q.e; }
+            else { b.classList.add("incorrecta"); retro.className="retro mal"; retro.innerHTML="<strong>Take another look.</strong> "+q.e; }
+            marcador();
+          });
+        });
+        cont.appendChild(div);
+      });
+    }
+    reinicio.addEventListener("click", construir);
+    construir();
+  })();
+
+})();
+</script>
+</body>
+</html>
